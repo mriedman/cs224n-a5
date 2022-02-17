@@ -169,7 +169,7 @@ class CharCorruptionDataset(Dataset):
     def __getitem__(self, idx):
         x = self.data[idx]
         x_trunc = x[:torch.randint(low=4, high=self.block_size*7//8+1, size=(1,))]
-        trunc_len = len(x_trunc)
+        trunc_len = max(4, len(x_trunc))
         masked_low = torch.randint(low=trunc_len//4, high=trunc_len//2, size=(1,))
         masked_high = torch.randint(low=trunc_len // 2+1, high=(3*trunc_len) // 4+1, size=(1,))
         prefix, masked_content, suffix = x_trunc[:masked_low], x_trunc[masked_low:masked_high], x_trunc[masked_high:]
