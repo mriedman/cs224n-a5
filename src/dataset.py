@@ -168,13 +168,15 @@ class CharCorruptionDataset(Dataset):
 
     def __getitem__(self, idx):
         x = self.data[idx]
-        x_trunc = x[:torch.randint(low=4, high=len(x)*7//8+1, size=(1,))]
+        x_trunc = x[:torch.randint(low=4, high=self.block_size*7//8+1, size=(1,))]
         trunc_len = len(x_trunc)
         masked_low = torch.randint(low=trunc_len//4, high=trunc_len//2, size=(1,))
         masked_high = torch.randint(low=trunc_len // 2+1, high=(3*trunc_len) // 4+1, size=(1,))
         prefix, masked_content, suffix = x_trunc[:masked_low], x_trunc[masked_low:masked_high], x_trunc[masked_high:]
         s = prefix + self.MASK_CHAR + suffix + self.MASK_CHAR + masked_content
         s += self.PAD_CHAR * (self.block_size - len(s))
+        if len(s) != self.block_size or self.block_size != 128:
+            print(s, len(s), self.block_size, idx, self.data[idx])
 
         x = s[:-1]
         y = s[1:]
