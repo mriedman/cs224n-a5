@@ -171,7 +171,16 @@ class CharCorruptionDataset(Dataset):
         x_trunc = x[:torch.randint(low=4, high=len(x)*7//8+1, size=(1,))]
         trunc_len = len(x_trunc)
         masked_low = torch.randint(low=trunc_len//4, high=trunc_len//2, size=(1,))
-        masked_high = torch.randint(low=trunc_len // 2+1, high=(3*trunc_len) // 4, size=(1,))
+        masked_high = torch.randint(low=trunc_len // 2+1, high=(3*trunc_len) // 4+1, size=(1,))
+        prefix, masked_content, suffix = x_trunc[:masked_low], x_trunc[masked_low:masked_high], x_trunc[masked_high:]
+        s = prefix + self.MASK_CHAR + suffix + self.MASK_CHAR + masked_content
+        s += self.PAD_CHAR * (self.block_size - len(s))
+
+        x = s[:-1]
+        y = s[1:]
+        x = torch.tensor([self.stoi[c] for c in x], dtype=torch.long)
+        y = torch.tensor([self.stoi[c] for c in y], dtype=torch.long)
+        return x, y
 
 
 """
