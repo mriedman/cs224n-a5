@@ -133,7 +133,8 @@ elif args.function == 'evaluate':
     assert args.outputs_path is not None
     assert args.reading_params_path is not None
     assert args.eval_corpus_path is not None
-    model1.load_state_dict(torch.load(args.reading_params_path))
+    model = model1
+    model.load_state_dict(torch.load(args.reading_params_path))
     correct = 0
     total = 0
     with open(args.outputs_path, 'w') as fout:
