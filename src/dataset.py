@@ -167,8 +167,12 @@ class CharCorruptionDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        # TODO [part e]: see spec above
-        raise NotImplementedError
+        x = self.data[idx]
+        x_trunc = x[:torch.randint(low=4, high=len(x)*7//8+1, size=(1,))]
+        trunc_len = len(x_trunc)
+        masked_low = torch.randint(low=trunc_len//4, high=trunc_len//2, size=(1,))
+        masked_high = torch.randint(low=trunc_len // 2+1, high=(3*trunc_len) // 4, size=(1,))
+
 
 """
 Code under here is strictly for your debugging purposes; feel free to modify
